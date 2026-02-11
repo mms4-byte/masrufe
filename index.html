@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام الإدارة المالية الملكي - النسخة السحابية</title>
+    <title>نظام الملكي - النسخة المطورة</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -14,63 +14,63 @@
 
         body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
 
-        /* شاشة القفل المحصنة */
+        /* شاشة القفل مع مربع الإدخال الملون المتفاعل */
         #lock-screen {
-            position: fixed; inset: 0; background: #000; z-index: 9999;
+            position: fixed; inset: 0; background: #000; z-index: 99999;
             display: flex; justify-content: center; align-items: center;
         }
-        #lock-screen input {
-            background: #000; border: 1px solid #444; color: #fff;
-            padding: 15px; border-radius: 10px; text-align: center; font-size: 1.2rem; width: 200px;
+        .lock-container { text-align: center; }
+        #passInput {
+            background: #111;
+            border: 2px solid #333;
+            color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 2rem;
+            width: 150px;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 0 rgba(88, 166, 255, 0);
+        }
+        /* تلوين المربع عند النقر أو الكتابة */
+        #passInput:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(88, 166, 255, 0.4);
+            background: #000;
         }
 
         #main-app { display: none; max-width: 900px; margin: auto; padding: 10px; }
 
-        .header-sticky {
-            position: sticky; top: 0; z-index: 100; background: var(--bg);
-            padding: 10px 0; border-bottom: 2px solid var(--border);
-        }
-
+        .header-sticky { position: sticky; top: 0; z-index: 100; background: var(--bg); padding: 10px 0; border-bottom: 2px solid var(--border); }
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .stat-card { background: var(--card); padding: 12px; border-radius: 10px; border: 1px solid var(--border); text-align: center; }
 
-        .input-box {
-            background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid var(--border);
-            margin: 15px 0; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
-        }
-        input { background: #0d1117; border: 1px solid var(--border); color: white; padding: 10px; border-radius: 6px; outline: none; }
-        
-        .btn { padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
-        .btn-add { background: var(--accent); color: #000; grid-column: span 3; margin-top: 5px; }
-        .btn-log { background: var(--gold); color: #000; width: 100%; margin-top: 10px; }
+        .input-box { background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin: 15px 0; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+        .input-box input { background: #0d1117; border: 1px solid var(--border); color: white; padding: 10px; border-radius: 6px; outline: none; }
+        .btn-add { background: var(--accent); color: #000; font-weight: bold; grid-column: span 3; margin-top: 5px; cursor: pointer; border: none; padding: 10px; border-radius: 8px; }
 
-        /* الجدول المحدث بعمود التاريخ */
-        .table-wrapper { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: auto; max-height: 400px; }
+        .table-wrapper { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: auto; max-height: 450px; }
         table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th { background: #21262d; padding: 12px; position: sticky; top: 0; z-index: 5; text-align: center; }
+        th { background: #21262d; padding: 12px; position: sticky; top: 0; z-index: 10; border-bottom: 2px solid var(--border); }
         td { padding: 12px; text-align: center; border-bottom: 1px solid var(--border); }
 
-        /* نافذة الملخص */
+        /* الوصل الأصفر الرسمي */
+        #summary-receipt { position: absolute; left: -9999px; width: 320px; background: #fffbe6; color: #000; padding: 40px 25px; border: 2px solid #000; font-family: Arial, sans-serif; }
+        .rec-row { display: flex; justify-content: space-between; margin: 10px 0; font-weight: bold; border-bottom: 1px dashed #000; padding-bottom: 5px; }
+        .rec-total { background: #000; color: #fff; padding: 12px; text-align: center; margin-top: 20px; font-weight: bold; font-size: 1.2rem; }
+
         #log-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; padding: 20px; }
         .log-inner { background: var(--card); max-width: 450px; margin: auto; padding: 20px; border-radius: 15px; border: 1px solid var(--border); }
-
-        /* الوصل الأصفر الرسمي */
-        #summary-receipt {
-            position: absolute; left: -9999px;
-            width: 320px; background: #fffbe6; color: #000;
-            padding: 40px 25px; font-family: 'Arial', sans-serif;
-            border: 2px solid #000;
-        }
-        .rec-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
-        .rec-row { display: flex; justify-content: space-between; margin: 10px 0; font-weight: bold; font-size: 16px; border-bottom: 1px dashed #666; padding-bottom: 5px; }
-        .rec-total { background: #000; color: #fff; padding: 12px; text-align: center; margin-top: 20px; font-size: 1.2rem; font-weight: bold; }
-        .rec-signature { margin-top: 40px; border-top: 2px solid #000; width: 140px; text-align: center; padding-top: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="lock-screen">
-        <input type="password" id="passInput" placeholder="الرمز السري" oninput="unlock(this.value)">
+        <div class="lock-container">
+            <input type="password" id="passInput" maxlength="4" placeholder="••••" oninput="unlock(this.value)">
+            <p style="color: #444; margin-top: 15px; font-size: 0.8rem;">نظام سري محصن</p>
+        </div>
     </div>
 
     <div id="main-app">
@@ -80,14 +80,14 @@
                 <div class="stat-card">المصروف<br><b id="totalSpent" style="color:#ff7b72">0</b></div>
                 <div class="stat-card">المتبقي<br><b id="totalBalance" style="color:#7ee787">720,000</b></div>
             </div>
-            <button class="btn btn-log" onclick="openLog()">📑 عرض ملخص الفئات والطباعة الصفراء</button>
+            <button onclick="openLog()" style="background:var(--gold); color:#000; width:100%; margin-top:10px; font-weight:bold; padding:10px; border-radius:8px; border:none; cursor:pointer;">📑 عرض ملخص الفئات والطباعة</button>
         </div>
 
         <div class="input-box">
             <input type="text" id="inName" placeholder="المادة (م، خ، د..)">
             <input type="number" id="inPrice" placeholder="المبلغ (20=20ألف)">
             <input type="text" id="inNote" placeholder="ملاحظة">
-            <button class="btn btn-add" onclick="addItem()">إضافة للسجل</button>
+            <button class="btn-add" onclick="addItem()">إضافة للسجل</button>
         </div>
 
         <div class="table-wrapper">
@@ -113,27 +113,33 @@
                 <button onclick="closeLog()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer">×</button>
             </div>
             <div id="logBody" style="margin-top:15px;"></div>
-            <button class="btn" style="background:#2ecc71; color:#000; width:100%; margin-top:20px;" onclick="printSummary()">
+            <button onclick="printSummary()" style="background:#2ecc71; color:#000; width:100%; margin-top:20px; padding:10px; font-weight:bold; border:none; border-radius:8px; cursor:pointer;">
                 <i class="fas fa-print"></i> تحميل الوصل الأصفر الرسمي
             </button>
         </div>
     </div>
 
     <div id="summary-receipt">
-        <div class="rec-header">
-            <h2 style="margin:0;">ملخص المصروفات</h2>
-            <p id="rec-date-top" style="font-size:13px; margin-top:5px; font-weight:bold;"></p>
+        <div style="text-align:center; border-bottom: 2px solid #000; padding-bottom:10px; margin-bottom:15px;">
+            <h2 style="margin:0;">ملخص المصروفات الشهري</h2>
+            <p id="rec-date-top" style="font-size:13px; font-weight:bold; margin-top:5px;"></p>
         </div>
         <div id="receipt-items-list"></div>
         <div class="rec-total">المجموع الكلي: <span id="rec-grand-total"></span> د.ع</div>
-        <div class="rec-signature">المحاسب: ________</div>
+        <div style="margin-top:40px; border-top:2px solid #000; width:140px; text-align:center; font-weight:bold; padding-top:5px;">المحاسب: ________</div>
     </div>
 
 <script>
     const SALARY = 720000;
-    const USER_ID = "ROYAL_KING_2026"; // ايد ثابت خاص بك للذاكرة
+    const USER_ID = "ROYAL_VAULT_FINAL_V9"; 
     let db = JSON.parse(localStorage.getItem(USER_ID)) || [];
     const shortcuts = {'م': 'مولد', 'خ': 'مخضر', 'د': 'دجاج/لحوم', 'ن': 'انترنت', 'ص': 'مصروف شخصي', 'ر': 'رصيد'};
+
+    window.onload = function() {
+        document.getElementById('lock-screen').style.display = 'flex';
+        document.getElementById('main-app').style.display = 'none';
+        document.getElementById('passInput').focus(); // توجيه التركيز للمربع فوراً
+    };
 
     function unlock(v) {
         if(v === "2006") {
@@ -150,11 +156,8 @@
         if(!name || isNaN(price)) return;
         if(shortcuts[name]) name = shortcuts[name];
 
-        const now = new Date();
-        const dateStr = now.toLocaleDateString('ar-EG');
-        
-        db.push({ id: Date.now(), name, price: price * 1000, note, date: dateStr });
-        localStorage.setItem(USER_ID, JSON.stringify(db)); // الحفظ باستخدام الايد الثابت
+        db.push({ id: Date.now(), name, price: price * 1000, note, date: new Date().toLocaleDateString('ar-EG') });
+        localStorage.setItem(USER_ID, JSON.stringify(db));
         updateUI();
         document.getElementById('inName').value = ''; document.getElementById('inPrice').value = '';
     }
@@ -171,19 +174,15 @@
             const row = body.insertRow();
             row.innerHTML = `
                 <td style="font-size:0.8rem">${item.date}</td>
-                <td><b>${item.name}</b></td>
-                <td style="font-weight:bold">${item.price.toLocaleString()}</td>
+                <td style="font-weight:bold">${item.name}</td>
+                <td style="font-weight:bold; color:var(--gold)">${item.price.toLocaleString()}</td>
                 <td style="font-size:0.85rem; color:#8b949e">${item.note}</td>
                 <td><i class="fas fa-trash" style="color:#ff7b72; cursor:pointer" onclick="deleteItem(${item.id})"></i></td>`;
         });
     }
 
     function deleteItem(id) {
-        if(confirm("حذف؟")) { 
-            db = db.filter(i => i.id !== id); 
-            localStorage.setItem(USER_ID, JSON.stringify(db)); 
-            updateUI(); 
-        }
+        if(confirm("حذف؟")) { db = db.filter(i => i.id !== id); localStorage.setItem(USER_ID, JSON.stringify(db)); updateUI(); }
     }
 
     function openLog() {
@@ -191,28 +190,25 @@
         const cats = {};
         db.forEach(i => cats[i.name] = (cats[i.name] || 0) + i.price);
         let html = '';
-        for(let c in cats) html += `<div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #333;"><span>${c}</span><b>${cats[c].toLocaleString()}</b></div>`;
+        for(let c in cats) html += `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #333;"><span>${c}</span><b>${cats[c].toLocaleString()}</b></div>`;
         document.getElementById('logBody').innerHTML = html || "لا توجد بيانات";
     }
 
     async function printSummary() {
-        const cats = {};
-        let total = 0;
+        const cats = {}; let total = 0;
         db.forEach(i => { cats[i.name] = (cats[i.name] || 0) + i.price; total += i.price; });
 
         const now = new Date();
         document.getElementById('rec-date-top').innerText = now.toLocaleDateString('ar-EG') + " | " + now.toLocaleTimeString('ar-EG');
-
         let itemsHtml = '';
         for(let c in cats) itemsHtml += `<div class="rec-row"><span>${c}</span><span>${cats[c].toLocaleString()}</span></div>`;
         
         document.getElementById('receipt-items-list').innerHTML = itemsHtml;
         document.getElementById('rec-grand-total').innerText = total.toLocaleString();
 
-        const receipt = document.getElementById('summary-receipt');
-        html2canvas(receipt, { backgroundColor: "#fffbe6", scale: 3 }).then(canvas => {
+        html2canvas(document.getElementById('summary-receipt'), { backgroundColor: "#fffbe6", scale: 3 }).then(canvas => {
             const link = document.createElement('a');
-            link.download = `وصل_ملخص_${now.getTime()}.png`;
+            link.download = `وصل_${Date.now()}.png`;
             link.href = canvas.toDataURL();
             link.click();
         });
