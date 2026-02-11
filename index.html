@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام الملكي - النسخة المطورة</title>
+    <title>نظام الملكي - قفل مطور</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
@@ -14,30 +14,31 @@
 
         body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
 
-        /* شاشة القفل مع مربع الإدخال الملون المتفاعل */
+        /* شاشة القفل المحسنة - ألوان واضحة */
         #lock-screen {
-            position: fixed; inset: 0; background: #000; z-index: 99999;
-            display: flex; justify-content: center; align-items: center;
+            position: fixed; inset: 0; background: #0d1117; z-index: 99999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
-        .lock-container { text-align: center; }
+        .lock-title { color: var(--accent); margin-bottom: 20px; font-weight: bold; letter-spacing: 2px; }
+        
         #passInput {
-            background: #111;
-            border: 2px solid #333;
+            background: #1c2128;
+            border: 2px solid var(--border);
             color: #fff;
-            padding: 20px;
+            padding: 15px;
             border-radius: 12px;
             text-align: center;
             font-size: 2rem;
-            width: 150px;
+            width: 180px;
             outline: none;
             transition: all 0.3s ease;
-            box-shadow: 0 0 0 rgba(88, 166, 255, 0);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
-        /* تلوين المربع عند النقر أو الكتابة */
+        /* توهج واضح عند الكتابة */
         #passInput:focus {
             border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(88, 166, 255, 0.4);
-            background: #000;
+            box-shadow: 0 0 25px rgba(88, 166, 255, 0.5);
+            background: #22272e;
         }
 
         #main-app { display: none; max-width: 900px; margin: auto; padding: 10px; }
@@ -48,7 +49,7 @@
 
         .input-box { background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin: 15px 0; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
         .input-box input { background: #0d1117; border: 1px solid var(--border); color: white; padding: 10px; border-radius: 6px; outline: none; }
-        .btn-add { background: var(--accent); color: #000; font-weight: bold; grid-column: span 3; margin-top: 5px; cursor: pointer; border: none; padding: 10px; border-radius: 8px; }
+        .btn-add { background: var(--accent); color: #000; font-weight: bold; grid-column: span 3; margin-top: 5px; cursor: pointer; border: none; padding: 12px; border-radius: 8px; }
 
         .table-wrapper { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: auto; max-height: 450px; }
         table { width: 100%; border-collapse: collapse; min-width: 600px; }
@@ -67,10 +68,9 @@
 <body>
 
     <div id="lock-screen">
-        <div class="lock-container">
-            <input type="password" id="passInput" maxlength="4" placeholder="••••" oninput="unlock(this.value)">
-            <p style="color: #444; margin-top: 15px; font-size: 0.8rem;">نظام سري محصن</p>
-        </div>
+        <div class="lock-title">نظام الخزنة الملكية</div>
+        <input type="password" id="passInput" maxlength="4" placeholder="الرمز" oninput="unlock(this.value)">
+        <p style="color: #444; margin-top: 20px; font-size: 0.9rem;">أدخل رمز الدخول للمتابعة</p>
     </div>
 
     <div id="main-app">
@@ -80,11 +80,11 @@
                 <div class="stat-card">المصروف<br><b id="totalSpent" style="color:#ff7b72">0</b></div>
                 <div class="stat-card">المتبقي<br><b id="totalBalance" style="color:#7ee787">720,000</b></div>
             </div>
-            <button onclick="openLog()" style="background:var(--gold); color:#000; width:100%; margin-top:10px; font-weight:bold; padding:10px; border-radius:8px; border:none; cursor:pointer;">📑 عرض ملخص الفئات والطباعة</button>
+            <button onclick="openLog()" style="background:var(--gold); color:#000; width:100%; margin-top:10px; font-weight:bold; padding:12px; border-radius:8px; border:none; cursor:pointer;">📑 كشف الحساب والطباعة</button>
         </div>
 
         <div class="input-box">
-            <input type="text" id="inName" placeholder="المادة (م، خ، د..)">
+            <input type="text" id="inName" placeholder="المادة (م، خ...)">
             <input type="number" id="inPrice" placeholder="المبلغ (20=20ألف)">
             <input type="text" id="inNote" placeholder="ملاحظة">
             <button class="btn-add" onclick="addItem()">إضافة للسجل</button>
@@ -113,8 +113,8 @@
                 <button onclick="closeLog()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer">×</button>
             </div>
             <div id="logBody" style="margin-top:15px;"></div>
-            <button onclick="printSummary()" style="background:#2ecc71; color:#000; width:100%; margin-top:20px; padding:10px; font-weight:bold; border:none; border-radius:8px; cursor:pointer;">
-                <i class="fas fa-print"></i> تحميل الوصل الأصفر الرسمي
+            <button onclick="printSummary()" style="background:#2ecc71; color:#000; width:100%; margin-top:20px; padding:12px; font-weight:bold; border:none; border-radius:8px; cursor:pointer;">
+                <i class="fas fa-print"></i> تحميل الوصل الأصفر
             </button>
         </div>
     </div>
@@ -131,14 +131,14 @@
 
 <script>
     const SALARY = 720000;
-    const USER_ID = "ROYAL_VAULT_FINAL_V9"; 
+    const USER_ID = "ROYAL_V10_SECURE"; 
     let db = JSON.parse(localStorage.getItem(USER_ID)) || [];
     const shortcuts = {'م': 'مولد', 'خ': 'مخضر', 'د': 'دجاج/لحوم', 'ن': 'انترنت', 'ص': 'مصروف شخصي', 'ر': 'رصيد'};
 
     window.onload = function() {
         document.getElementById('lock-screen').style.display = 'flex';
         document.getElementById('main-app').style.display = 'none';
-        document.getElementById('passInput').focus(); // توجيه التركيز للمربع فوراً
+        document.getElementById('passInput').focus();
     };
 
     function unlock(v) {
@@ -208,7 +208,7 @@
 
         html2canvas(document.getElementById('summary-receipt'), { backgroundColor: "#fffbe6", scale: 3 }).then(canvas => {
             const link = document.createElement('a');
-            link.download = `وصل_${Date.now()}.png`;
+            link.download = `Report_${Date.now()}.png`;
             link.href = canvas.toDataURL();
             link.click();
         });
