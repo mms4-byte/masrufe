@@ -1,361 +1,224 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" class="light">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Six Pro - منصة نجاحك الدراسي</title>
-
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" href="https://i.imgur.com/1l3hICE.png">
-    <link rel="apple-touch-icon" href="https://i.imgur.com/1l3hICE.png">
-
-    <meta name="theme-color" content="#3b82f6">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام الإدارة المالية الملكي - النسخة السحابية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6, #fbbf24);
-            --card-bg: rgba(255, 255, 255, 0.82);
-            --card-blur: blur(24px);
-            --card-border: rgba(255, 255, 255, 0.45);
-            --text-primary: #0f172a;
-            --text-secondary: #475569;
-            --accent: #10b981;
-            --accent-glow: rgba(16, 185, 129, 0.5);
-            --radius: 36px;
-            --shadow: 0 16px 60px rgba(0,0,0,0.18);
-            --transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --bg: #0a0c10; --card: #161b22; --border: #30363d;
+            --accent: #58a6ff; --text: #c9d1d9; --gold: #d29922;
         }
 
-        .dark {
-            --bg-gradient: linear-gradient(135deg, #0f172a, #1e293b, #334155, #475569);
-            --card-bg: rgba(30, 41, 59, 0.78);
-            --card-border: rgba(148, 163, 184, 0.28);
-            --text-primary: #f1f5f9;
-            --text-secondary: #cbd5e1;
-            --shadow: 0 16px 60px rgba(0,0,0,0.5);
+        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+
+        /* شاشة القفل المحصنة */
+        #lock-screen {
+            position: fixed; inset: 0; background: #000; z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+        }
+        #lock-screen input {
+            background: #000; border: 1px solid #444; color: #fff;
+            padding: 15px; border-radius: 10px; text-align: center; font-size: 1.2rem; width: 200px;
         }
 
-        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        #main-app { display: none; max-width: 900px; margin: auto; padding: 10px; }
 
-        body {
-            font-family: 'Tajawal', system-ui, sans-serif;
-            background: var(--bg-gradient);
-            background-size: 300% 300%;
-            animation: gradientFlow 22s ease infinite;
-            color: var(--text-primary);
-            min-height: 100vh;
-            padding-bottom: 110px;
-            overflow-x: hidden;
-            position: relative;
-            transition: background 1s ease;
+        .header-sticky {
+            position: sticky; top: 0; z-index: 100; background: var(--bg);
+            padding: 10px 0; border-bottom: 2px solid var(--border);
         }
 
-        @keyframes gradientFlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .stat-card { background: var(--card); padding: 12px; border-radius: 10px; border: 1px solid var(--border); text-align: center; }
+
+        .input-box {
+            background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid var(--border);
+            margin: 15px 0; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
         }
+        input { background: #0d1117; border: 1px solid var(--border); color: white; padding: 10px; border-radius: 6px; outline: none; }
+        
+        .btn { padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-add { background: var(--accent); color: #000; grid-column: span 3; margin-top: 5px; }
+        .btn-log { background: var(--gold); color: #000; width: 100%; margin-top: 10px; }
 
-        @media (prefers-reduced-motion: reduce) {
-            body { animation: none; background: #60a5fa !important; }
-            .dark body { background: #0f172a !important; }
+        /* الجدول المحدث بعمود التاريخ */
+        .table-wrapper { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: auto; max-height: 400px; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { background: #21262d; padding: 12px; position: sticky; top: 0; z-index: 5; text-align: center; }
+        td { padding: 12px; text-align: center; border-bottom: 1px solid var(--border); }
+
+        /* نافذة الملخص */
+        #log-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; padding: 20px; }
+        .log-inner { background: var(--card); max-width: 450px; margin: auto; padding: 20px; border-radius: 15px; border: 1px solid var(--border); }
+
+        /* الوصل الأصفر الرسمي */
+        #summary-receipt {
+            position: absolute; left: -9999px;
+            width: 320px; background: #fffbe6; color: #000;
+            padding: 40px 25px; font-family: 'Arial', sans-serif;
+            border: 2px solid #000;
         }
-
-        .bubble-container { position:fixed; inset:0; pointer-events:none; z-index:0; }
-
-        .bubble {
-            position:absolute; border-radius:50%;
-            background:rgba(255,255,255,0.12);
-            backdrop-filter:blur(4px);
-            animation:float 32s infinite ease-in-out;
-        }
-
-        .dark .bubble { background:rgba(200,220,255,0.06); }
-
-        @keyframes float {
-            0%,100% { transform:translate(0,0) scale(1); }
-            50% { transform:translate(50px, -60px) scale(1.15); }
-        }
-
-        header.app-header {
-            position:fixed; top:0; left:0; right:0;
-            padding:60px 28px 24px;
-            z-index:100; text-align:center;
-        }
-
-        .logo-container {
-            display:inline-flex; align-items:center; gap:18px;
-        }
-
-        .app-logo-svg {
-            width:68px; height:68px;
-            filter:drop-shadow(0 6px 20px rgba(0,0,0,0.4));
-        }
-
-        .app-title-text {
-            font-size:2.8rem;
-            font-weight:900;
-            background:linear-gradient(90deg, #ffffff, #e0f2fe, #dbeafe, #ffffff);
-            -webkit-background-clip:text;
-            -webkit-text-fill-color:transparent;
-            background-clip:text;
-            text-shadow:0 3px 16px rgba(0,0,0,0.45);
-            letter-spacing:-1.2px;
-        }
-
-        .content-wrapper {
-            position:relative; z-index:10;
-            padding:140px 24px 40px;
-        }
-
-        .welcome-card, .news-card {
-            background:var(--card-bg);
-            backdrop-filter:var(--card-blur);
-            border:1px solid var(--card-border);
-            border-radius:var(--radius);
-            padding:38px 30px;
-            box-shadow:var(--shadow);
-            margin-bottom:44px;
-            transition:var(--transition);
-        }
-
-        .welcome-card:hover, .news-card:hover {
-            transform:translateY(-10px);
-            box-shadow:0 32px 80px rgba(0,0,0,0.28);
-        }
-
-        .welcome-title {
-            font-size:2.2rem;
-            font-weight:900;
-            margin-bottom:16px;
-            color:var(--text-primary);
-        }
-
-        .daily-goal {
-            font-size:1.35rem;
-            font-weight:800;
-            color:var(--accent);
-            text-shadow:0 2px 10px var(--accent-glow);
-        }
-
-        .features-grid {
-            display:grid;
-            grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
-            gap:28px;
-            margin-bottom:48px;
-        }
-
-        .feature-card {
-            background:var(--card-bg);
-            backdrop-filter:var(--card-blur);
-            border:1px solid var(--card-border);
-            border-radius:var(--radius);
-            padding:42px 26px;
-            text-align:center;
-            box-shadow:var(--shadow);
-            transition:var(--transition);
-            cursor:pointer;
-        }
-
-        .feature-card:hover {
-            transform:translateY(-14px) scale(1.05);
-            box-shadow:0 36px 90px rgba(0,0,0,0.3);
-        }
-
-        .feature-card:active { transform:scale(0.94); }
-
-        .feature-icon {
-            font-size:4.8rem;
-            margin-bottom:20px;
-            color:var(--accent);
-            transition:var(--transition);
-        }
-
-        .feature-name {
-            font-size:1.45rem;
-            font-weight:900;
-            color:var(--text-primary);
-        }
-
-        .bottom-nav {
-            position:fixed; bottom:20px; left:20px; right:20px;
-            height:88px;
-            background:var(--card-bg);
-            backdrop-filter:var(--card-blur);
-            border:1px solid var(--card-border);
-            border-radius:44px;
-            box-shadow:0 16px 64px rgba(0,0,0,0.3);
-            display:flex;
-            justify-content:space-around;
-            align-items:center;
-            z-index:100;
-        }
-
-        .nav-item {
-            display:flex; flex-direction:column; align-items:center;
-            color:var(--text-secondary);
-            font-size:0.85rem; font-weight:900;
-            transition:var(--transition);
-            padding:12px 20px;
-            border-radius:28px;
-        }
-
-        .nav-item.active, .nav-item:active {
-            color:var(--accent);
-            background:rgba(16,185,129,0.18);
-            transform:scale(1.1);
-        }
-
-        .nav-icon { font-size:2.6rem; margin-bottom:8px; }
-
-        .theme-toggle {
-            position:absolute; top:62px; right:32px;
-            background:rgba(255,255,255,0.22);
-            backdrop-filter:blur(14px);
-            border:1px solid rgba(255,255,255,0.35);
-            color:white;
-            border-radius:50%;
-            width:52px; height:52px;
-            display:flex; align-items:center; justify-content:center;
-            font-size:1.7rem; cursor:pointer;
-            transition:var(--transition);
-        }
-
-        .theme-toggle:hover { transform:scale(1.25) rotate(20deg); }
+        .rec-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+        .rec-row { display: flex; justify-content: space-between; margin: 10px 0; font-weight: bold; font-size: 16px; border-bottom: 1px dashed #666; padding-bottom: 5px; }
+        .rec-total { background: #000; color: #fff; padding: 12px; text-align: center; margin-top: 20px; font-size: 1.2rem; font-weight: bold; }
+        .rec-signature { margin-top: 40px; border-top: 2px solid #000; width: 140px; text-align: center; padding-top: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="bubble-container" id="bubbles"></div>
+    <div id="lock-screen">
+        <input type="password" id="passInput" placeholder="الرمز السري" oninput="unlock(this.value)">
+    </div>
 
-    <header class="app-header">
-        <div class="logo-container">
-            <svg class="app-logo-svg" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <radialGradient id="gradLogo" cx="50%" cy="50%" r="70%">
-                        <stop offset="0%" stop-color="#ffffff"/>
-                        <stop offset="40%" stop-color="#e0f2fe"/>
-                        <stop offset="100%" stop-color="#dbeafe"/>
-                    </radialGradient>
-                    <filter id="glowPremium" x="-60%" y="-60%" width="220%" height="220%">
-                        <feGaussianBlur stdDeviation="5" result="blur"/>
-                        <feMerge>
-                            <feMergeNode in="blur"/>
-                            <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                    </filter>
-                </defs>
-                <circle cx="60" cy="60" r="52" fill="url(#gradLogo)" filter="url(#glowPremium)"/>
-                <text x="60" y="78" font-family="Tajawal" font-weight="900" font-size="62" text-anchor="middle" fill="#0f172a">6</text>
-                <text x="60" y="105" font-family="Tajawal" font-weight="900" font-size="28" text-anchor="middle" fill="#ffffff" opacity="0.9">Pro</text>
-            </svg>
-            <span class="app-title-text">Six Pro</span>
+    <div id="main-app">
+        <div class="header-sticky">
+            <div class="stats-grid">
+                <div class="stat-card">الراتب<br><b>720,000</b></div>
+                <div class="stat-card">المصروف<br><b id="totalSpent" style="color:#ff7b72">0</b></div>
+                <div class="stat-card">المتبقي<br><b id="totalBalance" style="color:#7ee787">720,000</b></div>
+            </div>
+            <button class="btn btn-log" onclick="openLog()">📑 عرض ملخص الفئات والطباعة الصفراء</button>
         </div>
 
-        <button class="theme-toggle material-icons" id="themeToggle" aria-label="تبديل الوضع">brightness_6</button>
-    </header>
-
-    <div class="content-wrapper">
-        <div class="welcome-card">
-            <h2 class="welcome-title">أهلاً بالنجم الصاعد!</h2>
-            <div class="daily-goal" id="dailyGoal">جاري حساب إنجازاتك اليوم...</div>
+        <div class="input-box">
+            <input type="text" id="inName" placeholder="المادة (م، خ، د..)">
+            <input type="number" id="inPrice" placeholder="المبلغ (20=20ألف)">
+            <input type="text" id="inNote" placeholder="ملاحظة">
+            <button class="btn btn-add" onclick="addItem()">إضافة للسجل</button>
         </div>
 
-        <div class="features-grid">
-            <div class="feature-card" onclick="navigateWithFeedback('tasks.html')">
-                <span class="feature-icon material-icons">assignment</span>
-                <div class="feature-name">المهام اليومية</div>
-            </div>
-            <div class="feature-card" onclick="navigateWithFeedback('math.html')">
-                <span class="feature-icon material-icons">calculate</span>
-                <div class="feature-name">الرياضيات</div>
-            </div>
-            <div class="feature-card" onclick="navigateWithFeedback('english.html')">
-                <span class="feature-icon material-icons">translate</span>
-                <div class="feature-name">الإنكليزي</div>
-            </div>
-            <div class="feature-card" onclick="navigateWithFeedback('schedule.html')">
-                <span class="feature-icon material-icons">calendar_today</span>
-                <div class="feature-name">الجدول الدراسي</div>
-            </div>
-        </div>
-
-        <div class="news-card">
-            <h3 style="font-weight:900; font-size:1.5rem; margin-bottom:16px;">تذكير يومي مميز</h3>
-            <p id="reminderText" style="font-size:1.15rem; line-height:1.8; font-weight:600;">جاري تحميل رسالتك التحفيزية...</p>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>التاريخ</th>
+                        <th>المادة</th>
+                        <th>المبلغ</th>
+                        <th>الملاحظة</th>
+                        <th>حذف</th>
+                    </tr>
+                </thead>
+                <tbody id="mainTable"></tbody>
+            </table>
         </div>
     </div>
 
-    <nav class="bottom-nav">
-        <div class="nav-item active"><span class="nav-icon material-icons">home</span>الرئيسية</div>
-        <div class="nav-item" onclick="navigateWithFeedback('stats.html')"><span class="nav-icon material-icons">bar_chart</span>الإحصائيات</div>
-        <div class="nav-item" onclick="navigateWithFeedback('alerts.html')"><span class="nav-icon material-icons">notifications</span>التنبيهات</div>
-        <div class="nav-item" onclick="navigateWithFeedback('settings.html')"><span class="nav-icon material-icons">settings</span>الإعدادات</div>
-    </nav>
+    <div id="log-modal">
+        <div class="log-inner">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3>ملخص الحسابات</h3>
+                <button onclick="closeLog()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer">×</button>
+            </div>
+            <div id="logBody" style="margin-top:15px;"></div>
+            <button class="btn" style="background:#2ecc71; color:#000; width:100%; margin-top:20px;" onclick="printSummary()">
+                <i class="fas fa-print"></i> تحميل الوصل الأصفر الرسمي
+            </button>
+        </div>
+    </div>
 
-    <script>
-        // Theme Toggle
-        const html = document.documentElement;
-        const toggle = document.getElementById('themeToggle');
+    <div id="summary-receipt">
+        <div class="rec-header">
+            <h2 style="margin:0;">ملخص المصروفات</h2>
+            <p id="rec-date-top" style="font-size:13px; margin-top:5px; font-weight:bold;"></p>
+        </div>
+        <div id="receipt-items-list"></div>
+        <div class="rec-total">المجموع الكلي: <span id="rec-grand-total"></span> د.ع</div>
+        <div class="rec-signature">المحاسب: ________</div>
+    </div>
 
-        function setTheme(dark) {
-            html.classList.toggle('dark', dark);
-            localStorage.setItem('theme', dark ? 'dark' : 'light');
+<script>
+    const SALARY = 720000;
+    const USER_ID = "ROYAL_KING_2026"; // ايد ثابت خاص بك للذاكرة
+    let db = JSON.parse(localStorage.getItem(USER_ID)) || [];
+    const shortcuts = {'م': 'مولد', 'خ': 'مخضر', 'د': 'دجاج/لحوم', 'ن': 'انترنت', 'ص': 'مصروف شخصي', 'ر': 'رصيد'};
+
+    function unlock(v) {
+        if(v === "2006") {
+            document.getElementById('lock-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            updateUI();
         }
+    }
 
-        if (localStorage.getItem('theme') === 'dark' || 
-            (!localStorage.getItem('theme') && matchMedia('(prefers-color-scheme: dark)').matches)) {
-            setTheme(true);
-        }
+    function addItem() {
+        let name = document.getElementById('inName').value;
+        let price = parseFloat(document.getElementById('inPrice').value);
+        let note = document.getElementById('inNote').value || "-";
+        if(!name || isNaN(price)) return;
+        if(shortcuts[name]) name = shortcuts[name];
 
-        toggle.onclick = () => setTheme(!html.classList.contains('dark'));
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('ar-EG');
+        
+        db.push({ id: Date.now(), name, price: price * 1000, note, date: dateStr });
+        localStorage.setItem(USER_ID, JSON.stringify(db)); // الحفظ باستخدام الايد الثابت
+        updateUI();
+        document.getElementById('inName').value = ''; document.getElementById('inPrice').value = '';
+    }
 
-        // Bubbles (أقل وأجمل)
-        const container = document.getElementById('bubbles');
-        for (let i = 0; i < 5; i++) {
-            let b = document.createElement('div');
-            b.className = 'bubble';
-            b.style.width = b.style.height = (50 + Math.random()*160) + 'px';
-            b.style.left = Math.random()*100 + '%';
-            b.style.top = Math.random()*100 + '%';
-            b.style.animationDelay = (Math.random()*15) + 's';
-            container.appendChild(b);
-        }
+    function updateUI() {
+        let spent = 0;
+        const body = document.getElementById('mainTable');
+        body.innerHTML = '';
+        db.forEach(i => spent += i.price);
+        document.getElementById('totalSpent').innerText = spent.toLocaleString();
+        document.getElementById('totalBalance').innerText = (SALARY - spent).toLocaleString();
 
-        // Ripple + Haptic + Navigate
-        function createRipple(e, el) {
-            let r = document.createElement('span');
-            r.className = 'ripple';
-            let d = Math.max(el.offsetWidth, el.offsetHeight) * 2.5;
-            r.style.width = r.style.height = d + 'px';
-            r.style.left = (e.clientX - el.getBoundingClientRect().left - d/2) + 'px';
-            r.style.top = (e.clientY - el.getBoundingClientRect().top - d/2) + 'px';
-            el.appendChild(r);
-            setTimeout(() => r.remove(), 800);
-        }
-
-        function navigateWithFeedback(url) {
-            const el = event.currentTarget;
-            createRipple(event, el);
-            if (navigator.vibrate) navigator.vibrate([10, 6, 10]);
-            el.style.transform = 'scale(0.92)';
-            setTimeout(() => location.href = url, 280);
-        }
-
-        // Dynamic content simulation
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                document.getElementById('dailyGoal').textContent = 'تقدم مذهل: ١١/١٥ مهمة اليوم • استمر يا بطل!';
-                document.getElementById('reminderText').textContent = 'امتحان الفيزياء قريب • راجع الوحدة الرابعة + حل ٢٠ تمرين إضافي اليوم!';
-            }, 1800);
+        db.slice().reverse().forEach(item => {
+            const row = body.insertRow();
+            row.innerHTML = `
+                <td style="font-size:0.8rem">${item.date}</td>
+                <td><b>${item.name}</b></td>
+                <td style="font-weight:bold">${item.price.toLocaleString()}</td>
+                <td style="font-size:0.85rem; color:#8b949e">${item.note}</td>
+                <td><i class="fas fa-trash" style="color:#ff7b72; cursor:pointer" onclick="deleteItem(${item.id})"></i></td>`;
         });
-    </script>
+    }
+
+    function deleteItem(id) {
+        if(confirm("حذف؟")) { 
+            db = db.filter(i => i.id !== id); 
+            localStorage.setItem(USER_ID, JSON.stringify(db)); 
+            updateUI(); 
+        }
+    }
+
+    function openLog() {
+        document.getElementById('log-modal').style.display = 'block';
+        const cats = {};
+        db.forEach(i => cats[i.name] = (cats[i.name] || 0) + i.price);
+        let html = '';
+        for(let c in cats) html += `<div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #333;"><span>${c}</span><b>${cats[c].toLocaleString()}</b></div>`;
+        document.getElementById('logBody').innerHTML = html || "لا توجد بيانات";
+    }
+
+    async function printSummary() {
+        const cats = {};
+        let total = 0;
+        db.forEach(i => { cats[i.name] = (cats[i.name] || 0) + i.price; total += i.price; });
+
+        const now = new Date();
+        document.getElementById('rec-date-top').innerText = now.toLocaleDateString('ar-EG') + " | " + now.toLocaleTimeString('ar-EG');
+
+        let itemsHtml = '';
+        for(let c in cats) itemsHtml += `<div class="rec-row"><span>${c}</span><span>${cats[c].toLocaleString()}</span></div>`;
+        
+        document.getElementById('receipt-items-list').innerHTML = itemsHtml;
+        document.getElementById('rec-grand-total').innerText = total.toLocaleString();
+
+        const receipt = document.getElementById('summary-receipt');
+        html2canvas(receipt, { backgroundColor: "#fffbe6", scale: 3 }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `وصل_ملخص_${now.getTime()}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+    }
+
+    function closeLog() { document.getElementById('log-modal').style.display = 'none'; }
+</script>
 </body>
 </html>
