@@ -2,219 +2,162 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام الملكي - قفل مطور</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>النظام الملكي V10 - التختيم النهائي</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
-            --bg: #0a0c10; --card: #161b22; --border: #30363d;
+            --bg: #0d1117; --card: #161b22; --border: #30363d;
             --accent: #58a6ff; --text: #c9d1d9; --gold: #d29922;
+            --danger: #ff7b72; --success: #7ee787;
         }
 
-        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding-bottom: 30px; }
 
-        /* شاشة القفل المحسنة - ألوان واضحة */
-        #lock-screen {
-            position: fixed; inset: 0; background: #0d1117; z-index: 99999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        /* شاشة القفل */
+        #lock-screen { position: fixed; inset: 0; background: var(--bg); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #passInput { background: #090c10; border: 2px solid var(--border); color: var(--gold); padding: 15px; border-radius: 15px; text-align: center; font-size: 2.5rem; width: 160px; outline: none; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+
+        /* التطبيق الرئيسي */
+        #main-app { display: none; max-width: 600px; margin: auto; padding: 10px; }
+        .stats-sticky { position: sticky; top: 10px; z-index: 100; background: rgba(13, 17, 23, 0.95); backdrop-filter: blur(10px); padding: 15px; border-radius: 15px; border: 1px solid var(--border); display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .stat-card { text-align: center; }
+        .stat-card small { display: block; color: #8b949e; font-size: 0.7rem; margin-bottom: 5px; }
+
+        .input-box { background: var(--card); padding: 15px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .input-box input { background: #0d1117; border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 8px; outline: none; }
+        .btn-add { background: var(--accent); color: #000; border: none; padding: 14px; border-radius: 10px; font-weight: 800; cursor: pointer; grid-column: span 2; }
+
+        table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 15px; overflow: hidden; }
+        th { background: #21262d; padding: 12px; font-size: 0.8rem; }
+        td { padding: 15px 10px; text-align: center; border-bottom: 1px solid var(--border); }
+
+        /* الوصل الملكي - التصميم النهائي */
+        #receipt-render {
+            position: absolute; left: -9999px; 
+            width: 360px; background: #fffbe6; color: #000 !important; 
+            padding: 40px 25px; border: 2px solid #000; box-sizing: border-box; text-align: center;
         }
-        .lock-title { color: var(--accent); margin-bottom: 20px; font-weight: bold; letter-spacing: 2px; }
-        
-        #passInput {
-            background: #1c2128;
-            border: 2px solid var(--border);
-            color: #fff;
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            font-size: 2rem;
-            width: 180px;
-            outline: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-        /* توهج واضح عند الكتابة */
-        #passInput:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 25px rgba(88, 166, 255, 0.5);
-            background: #22272e;
-        }
+        .rec-header h2 { font-size: 26px; margin: 10px 0; font-weight: 900; color: #000; }
+        .rec-table-final { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        .rec-table-final th { border-bottom: 2px solid #000; padding: 8px; text-align: right; color: #000 !important; background: transparent; }
+        .rec-table-final td { padding: 10px 8px; border-bottom: 1px dashed #777; text-align: right; font-weight: bold; color: #000 !important; background: transparent; }
+        .total-box { background: #000; color: #fff; font-size: 22px; font-weight: bold; padding: 12px; border-radius: 5px; margin-top: 15px; }
 
-        #main-app { display: none; max-width: 900px; margin: auto; padding: 10px; }
-
-        .header-sticky { position: sticky; top: 0; z-index: 100; background: var(--bg); padding: 10px 0; border-bottom: 2px solid var(--border); }
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .stat-card { background: var(--card); padding: 12px; border-radius: 10px; border: 1px solid var(--border); text-align: center; }
-
-        .input-box { background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid var(--border); margin: 15px 0; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-        .input-box input { background: #0d1117; border: 1px solid var(--border); color: white; padding: 10px; border-radius: 6px; outline: none; }
-        .btn-add { background: var(--accent); color: #000; font-weight: bold; grid-column: span 3; margin-top: 5px; cursor: pointer; border: none; padding: 12px; border-radius: 8px; }
-
-        .table-wrapper { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow: auto; max-height: 450px; }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th { background: #21262d; padding: 12px; position: sticky; top: 0; z-index: 10; border-bottom: 2px solid var(--border); }
-        td { padding: 12px; text-align: center; border-bottom: 1px solid var(--border); }
-
-        /* الوصل الأصفر الرسمي */
-        #summary-receipt { position: absolute; left: -9999px; width: 320px; background: #fffbe6; color: #000; padding: 40px 25px; border: 2px solid #000; font-family: Arial, sans-serif; }
-        .rec-row { display: flex; justify-content: space-between; margin: 10px 0; font-weight: bold; border-bottom: 1px dashed #000; padding-bottom: 5px; }
-        .rec-total { background: #000; color: #fff; padding: 12px; text-align: center; margin-top: 20px; font-weight: bold; font-size: 1.2rem; }
-
-        #log-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; padding: 20px; }
-        .log-inner { background: var(--card); max-width: 450px; margin: auto; padding: 20px; border-radius: 15px; border: 1px solid var(--border); }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; padding: 20px; }
+        .modal-content { background: var(--card); max-width: 450px; margin: 40px auto; border-radius: 20px; border: 1px solid var(--border); padding: 20px; }
     </style>
 </head>
 <body>
 
     <div id="lock-screen">
-        <div class="lock-title">نظام الخزنة الملكية</div>
-        <input type="password" id="passInput" maxlength="4" placeholder="الرمز" oninput="unlock(this.value)">
-        <p style="color: #444; margin-top: 20px; font-size: 0.9rem;">أدخل رمز الدخول للمتابعة</p>
+        <i class="fas fa-crown" style="font-size: 40px; color: var(--gold); margin-bottom: 20px;"></i>
+        <h2 style="color:var(--gold)">النظام الملكي V10</h2>
+        <input type="password" id="passInput" maxlength="4" placeholder="••••" oninput="checkPass(this.value)">
     </div>
 
     <div id="main-app">
-        <div class="header-sticky">
-            <div class="stats-grid">
-                <div class="stat-card">الراتب<br><b>720,000</b></div>
-                <div class="stat-card">المصروف<br><b id="totalSpent" style="color:#ff7b72">0</b></div>
-                <div class="stat-card">المتبقي<br><b id="totalBalance" style="color:#7ee787">720,000</b></div>
-            </div>
-            <button onclick="openLog()" style="background:var(--gold); color:#000; width:100%; margin-top:10px; font-weight:bold; padding:12px; border-radius:8px; border:none; cursor:pointer;">📑 كشف الحساب والطباعة</button>
+        <div class="stats-sticky">
+            <div class="stat-card"><small>الراتب</small><b>720,000</b></div>
+            <div class="stat-card"><small>المصروف</small><b id="totalSpent" style="color:var(--danger)">0</b></div>
+            <div class="stat-card"><small>المتبقي</small><b id="totalBalance" style="color:var(--success)">0</b></div>
         </div>
 
+        <button onclick="openLog()" style="background:var(--gold); color:#000; width:100%; border:none; padding:15px; border-radius:12px; font-weight:bold; margin-bottom:20px; cursor:pointer;">
+            <i class="fas fa-file-invoice-dollar"></i> عرض السجل الملكي والطباعة
+        </button>
+
         <div class="input-box">
-            <input type="text" id="inName" placeholder="المادة (م، خ...)">
-            <input type="number" id="inPrice" placeholder="المبلغ (20=20ألف)">
-            <input type="text" id="inNote" placeholder="ملاحظة">
+            <input type="text" id="itemName" placeholder="المادة (م، خ...)">
+            <input type="number" id="itemPrice" placeholder="المبلغ">
             <button class="btn-add" onclick="addItem()">إضافة للسجل</button>
         </div>
 
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>التاريخ</th>
-                        <th>المادة</th>
-                        <th>المبلغ</th>
-                        <th>الملاحظة</th>
-                        <th>حذف</th>
-                    </tr>
-                </thead>
-                <tbody id="mainTable"></tbody>
-            </table>
+        <table>
+            <thead><tr><th>التاريخ</th><th>المادة</th><th>المبلغ</th><th>حذف</th></tr></thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+
+    <div id="logModal" class="modal">
+        <div class="modal-content">
+            <h3 style="text-align:center; color:var(--gold);">ملخص المصروفات</h3>
+            <div id="logItems"></div>
+            <button onclick="generateReceipt()" style="background:var(--success); color:#000; width:100%; border:none; padding:15px; border-radius:10px; font-weight:bold; margin-top:20px;">استخراج الوصل النهائي</button>
+            <button onclick="closeLog()" style="background:#333; color:#fff; width:100%; border:none; padding:10px; border-radius:10px; margin-top:10px;">رجوع</button>
         </div>
     </div>
 
-    <div id="log-modal">
-        <div class="log-inner">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h3>ملخص الحسابات</h3>
-                <button onclick="closeLog()" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer">×</button>
-            </div>
-            <div id="logBody" style="margin-top:15px;"></div>
-            <button onclick="printSummary()" style="background:#2ecc71; color:#000; width:100%; margin-top:20px; padding:12px; font-weight:bold; border:none; border-radius:8px; cursor:pointer;">
-                <i class="fas fa-print"></i> تحميل الوصل الأصفر
-            </button>
-        </div>
-    </div>
-
-    <div id="summary-receipt">
-        <div style="text-align:center; border-bottom: 2px solid #000; padding-bottom:10px; margin-bottom:15px;">
-            <h2 style="margin:0;">ملخص المصروفات الشهري</h2>
-            <p id="rec-date-top" style="font-size:13px; font-weight:bold; margin-top:5px;"></p>
-        </div>
-        <div id="receipt-items-list"></div>
-        <div class="rec-total">المجموع الكلي: <span id="rec-grand-total"></span> د.ع</div>
-        <div style="margin-top:40px; border-top:2px solid #000; width:140px; text-align:center; font-weight:bold; padding-top:5px;">المحاسب: ________</div>
+    <div id="receipt-render">
+        <i class="fas fa-crown" style="font-size: 30px;"></i>
+        <div class="rec-header"><h2>النظام الملكي</h2><p>كشف المصروفات الشخصية</p></div>
+        <div id="recDate" style="font-weight:bold; margin-bottom:10px; border-bottom:2px solid #000; padding-bottom:5px;"></div>
+        <table class="rec-table-final">
+            <thead><tr><th>المادة</th><th style="text-align:left">المبلغ</th></tr></thead>
+            <tbody id="recItems"></tbody>
+        </table>
+        <div style="font-weight:bold; margin-top:20px;">إجمالي المبلغ</div>
+        <div class="total-box" id="recTotal"></div>
+        <p style="font-size:10px; margin-top:30px; border-top:1px solid #000; padding-top:10px;">* وثيقة إلكترونية صادرة من نظام V10 *</p>
     </div>
 
 <script>
     const SALARY = 720000;
-    const USER_ID = "ROYAL_V10_SECURE"; 
-    let db = JSON.parse(localStorage.getItem(USER_ID)) || [];
+    const STORAGE_KEY = "ROYAL_V10_FINAL_STABLE";
     const shortcuts = {'م': 'مولد', 'خ': 'مخضر', 'د': 'دجاج/لحوم', 'ن': 'انترنت', 'ص': 'مصروف شخصي', 'ر': 'رصيد'};
+    let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
-    window.onload = function() {
-        document.getElementById('lock-screen').style.display = 'flex';
-        document.getElementById('main-app').style.display = 'none';
-        document.getElementById('passInput').focus();
-    };
-
-    function unlock(v) {
-        if(v === "2006") {
-            document.getElementById('lock-screen').style.display = 'none';
-            document.getElementById('main-app').style.display = 'block';
-            updateUI();
-        }
-    }
+    function checkPass(v) { if(v === "2006") { document.getElementById('lock-screen').style.display='none'; document.getElementById('main-app').style.display='block'; renderUI(); } }
 
     function addItem() {
-        let name = document.getElementById('inName').value;
-        let price = parseFloat(document.getElementById('inPrice').value);
-        let note = document.getElementById('inNote').value || "-";
+        let name = document.getElementById('itemName').value.trim();
+        let price = parseFloat(document.getElementById('itemPrice').value);
         if(!name || isNaN(price)) return;
         if(shortcuts[name]) name = shortcuts[name];
-
-        db.push({ id: Date.now(), name, price: price * 1000, note, date: new Date().toLocaleDateString('ar-EG') });
-        localStorage.setItem(USER_ID, JSON.stringify(db));
-        updateUI();
-        document.getElementById('inName').value = ''; document.getElementById('inPrice').value = '';
+        db.push({ id: Date.now(), name, price: price * 1000, date: new Date().toLocaleDateString('ar-EG', {month:'2-digit', day:'2-digit'}) });
+        save();
+        document.getElementById('itemName').value=''; document.getElementById('itemPrice').value=''; document.getElementById('itemName').focus();
     }
 
-    function updateUI() {
-        let spent = 0;
-        const body = document.getElementById('mainTable');
-        body.innerHTML = '';
-        db.forEach(i => spent += i.price);
-        document.getElementById('totalSpent').innerText = spent.toLocaleString();
-        document.getElementById('totalBalance').innerText = (SALARY - spent).toLocaleString();
-
+    function renderUI() {
+        const body = document.getElementById('tableBody'); body.innerHTML = ''; let total = 0;
         db.slice().reverse().forEach(item => {
-            const row = body.insertRow();
-            row.innerHTML = `
-                <td style="font-size:0.8rem">${item.date}</td>
-                <td style="font-weight:bold">${item.name}</td>
-                <td style="font-weight:bold; color:var(--gold)">${item.price.toLocaleString()}</td>
-                <td style="font-size:0.85rem; color:#8b949e">${item.note}</td>
-                <td><i class="fas fa-trash" style="color:#ff7b72; cursor:pointer" onclick="deleteItem(${item.id})"></i></td>`;
+            total += item.price;
+            body.innerHTML += `<tr><td>${item.date}</td><td style="font-weight:bold">${item.name}</td><td style="color:var(--gold); font-weight:bold">${item.price.toLocaleString()}</td><td><i class="fas fa-trash-alt" style="color:var(--danger); cursor:pointer" onclick="deleteItem(${item.id})"></i></td></tr>`;
         });
+        document.getElementById('totalSpent').innerText = total.toLocaleString();
+        document.getElementById('totalBalance').innerText = (SALARY - total).toLocaleString();
     }
 
-    function deleteItem(id) {
-        if(confirm("حذف؟")) { db = db.filter(i => i.id !== id); localStorage.setItem(USER_ID, JSON.stringify(db)); updateUI(); }
-    }
-
+    function deleteItem(id) { if(confirm("حذف؟")) { db = db.filter(i => i.id !== id); save(); } }
+    function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); renderUI(); }
     function openLog() {
-        document.getElementById('log-modal').style.display = 'block';
-        const cats = {};
-        db.forEach(i => cats[i.name] = (cats[i.name] || 0) + i.price);
-        let html = '';
-        for(let c in cats) html += `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #333;"><span>${c}</span><b>${cats[c].toLocaleString()}</b></div>`;
-        document.getElementById('logBody').innerHTML = html || "لا توجد بيانات";
+        document.getElementById('logModal').style.display = 'block';
+        const summary = db.reduce((acc, item) => { acc[item.name] = (acc[item.name] || 0) + item.price; return acc; }, {});
+        let html = ''; for(let k in summary) html += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #333;"><span>${k}</span><b>${summary[k].toLocaleString()}</b></div>`;
+        document.getElementById('logItems').innerHTML = html || 'لا توجد بيانات';
     }
+    function closeLog() { document.getElementById('logModal').style.display = 'none'; }
 
-    async function printSummary() {
-        const cats = {}; let total = 0;
-        db.forEach(i => { cats[i.name] = (cats[i.name] || 0) + i.price; total += i.price; });
+    function generateReceipt() {
+        const summary = db.reduce((acc, item) => { acc[item.name] = (acc[item.name] || 0) + item.price; return acc; }, {});
+        document.getElementById('recDate').innerText = new Date().toLocaleString('ar-EG');
+        let html = ''; let total = 0;
+        for(let k in summary) {
+            total += summary[k];
+            html += `<tr><td style="color:#000 !important">${k}</td><td style="text-align:left; color:#000 !important">${summary[k].toLocaleString()}</td></tr>`;
+        }
+        document.getElementById('recItems').innerHTML = html;
+        document.getElementById('recTotal').innerText = total.toLocaleString() + " د.ع";
 
-        const now = new Date();
-        document.getElementById('rec-date-top').innerText = now.toLocaleDateString('ar-EG') + " | " + now.toLocaleTimeString('ar-EG');
-        let itemsHtml = '';
-        for(let c in cats) itemsHtml += `<div class="rec-row"><span>${c}</span><span>${cats[c].toLocaleString()}</span></div>`;
-        
-        document.getElementById('receipt-items-list').innerHTML = itemsHtml;
-        document.getElementById('rec-grand-total').innerText = total.toLocaleString();
-
-        html2canvas(document.getElementById('summary-receipt'), { backgroundColor: "#fffbe6", scale: 3 }).then(canvas => {
+        html2canvas(document.getElementById('receipt-render'), { scale: 3, backgroundColor: "#fffbe6" }).then(canvas => {
             const link = document.createElement('a');
-            link.download = `Report_${Date.now()}.png`;
+            link.download = `وصل_الملكي_التختيم.png`;
             link.href = canvas.toDataURL();
             link.click();
         });
     }
-
-    function closeLog() { document.getElementById('log-modal').style.display = 'none'; }
 </script>
 </body>
 </html>
