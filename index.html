@@ -1,163 +1,891 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>النظام الملكي V10 - التختيم النهائي</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <style>
-        :root {
-            --bg: #0d1117; --card: #161b22; --border: #30363d;
-            --accent: #58a6ff; --text: #c9d1d9; --gold: #d29922;
-            --danger: #ff7b72; --success: #7ee787;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>تشفير خفي احترافي</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap');
 
-        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding-bottom: 30px; }
+  :root {
+    --bg: #F2F2F7;
+    --card: rgba(255,255,255,0.85);
+    --card-border: rgba(255,255,255,0.6);
+    --text: #1C1C1E;
+    --text2: #8E8E93;
+    --blue: #007AFF;
+    --blue-bg: rgba(0,122,255,0.12);
+    --green: #34C759;
+    --green-bg: rgba(52,199,89,0.12);
+    --orange: #FF9500;
+    --orange-bg: rgba(255,149,0,0.12);
+    --red: #FF3B30;
+    --red-bg: rgba(255,59,48,0.12);
+    --purple: #AF52DE;
+    --purple-bg: rgba(175,82,222,0.12);
+    --divider: rgba(60,60,67,0.1);
+    --shadow: 0 2px 20px rgba(0,0,0,0.06);
+    --radius: 16px;
+    --radius-sm: 12px;
+  }
 
-        /* شاشة القفل */
-        #lock-screen { position: fixed; inset: 0; background: var(--bg); z-index: 99999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        #passInput { background: #090c10; border: 2px solid var(--border); color: var(--gold); padding: 15px; border-radius: 15px; text-align: center; font-size: 2.5rem; width: 160px; outline: none; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+  .dark {
+    --bg: #000000;
+    --card: rgba(28,28,30,0.85);
+    --card-border: rgba(255,255,255,0.08);
+    --text: #F5F5F7;
+    --text2: #8E8E93;
+    --divider: rgba(255,255,255,0.08);
+    --shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
 
-        /* التطبيق الرئيسي */
-        #main-app { display: none; max-width: 600px; margin: auto; padding: 10px; }
-        .stats-sticky { position: sticky; top: 10px; z-index: 100; background: rgba(13, 17, 23, 0.95); backdrop-filter: blur(10px); padding: 15px; border-radius: 15px; border: 1px solid var(--border); display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-        .stat-card { text-align: center; }
-        .stat-card small { display: block; color: #8b949e; font-size: 0.7rem; margin-bottom: 5px; }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        .input-box { background: var(--card); padding: 15px; border-radius: 15px; border: 1px solid var(--border); margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .input-box input { background: #0d1117; border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 8px; outline: none; }
-        .btn-add { background: var(--accent); color: #000; border: none; padding: 14px; border-radius: 10px; font-weight: 800; cursor: pointer; grid-column: span 2; }
+  body {
+    font-family: 'Tajawal', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    transition: background 0.4s, color 0.4s;
+  }
 
-        table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 15px; overflow: hidden; }
-        th { background: #21262d; padding: 12px; font-size: 0.8rem; }
-        td { padding: 15px 10px; text-align: center; border-bottom: 1px solid var(--border); }
+  .bg-orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .bg-orbs .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.35; animation: orbFloat 20s ease-in-out infinite; }
+  .dark .bg-orbs .orb { opacity: 0.15; }
+  .bg-orbs .orb:nth-child(1) { width: 300px; height: 300px; background: var(--blue); top: -80px; right: -60px; }
+  .bg-orbs .orb:nth-child(2) { width: 250px; height: 250px; background: var(--purple); bottom: 10%; left: -50px; animation-delay: -7s; }
+  .bg-orbs .orb:nth-child(3) { width: 200px; height: 200px; background: var(--green); top: 50%; right: -40px; animation-delay: -14s; }
+  @keyframes orbFloat {
+    0%,100% { transform: translate(0,0) scale(1); }
+    25% { transform: translate(30px,-40px) scale(1.1); }
+    50% { transform: translate(-20px,30px) scale(0.95); }
+    75% { transform: translate(40px,20px) scale(1.05); }
+  }
 
-        /* الوصل الملكي - التصميم النهائي */
-        #receipt-render {
-            position: absolute; left: -9999px; 
-            width: 360px; background: #fffbe6; color: #000 !important; 
-            padding: 40px 25px; border: 2px solid #000; box-sizing: border-box; text-align: center;
-        }
-        .rec-header h2 { font-size: 26px; margin: 10px 0; font-weight: 900; color: #000; }
-        .rec-table-final { width: 100%; border-collapse: collapse; margin: 15px 0; }
-        .rec-table-final th { border-bottom: 2px solid #000; padding: 8px; text-align: right; color: #000 !important; background: transparent; }
-        .rec-table-final td { padding: 10px 8px; border-bottom: 1px dashed #777; text-align: right; font-weight: bold; color: #000 !important; background: transparent; }
-        .total-box { background: #000; color: #fff; font-size: 22px; font-weight: bold; padding: 12px; border-radius: 5px; margin-top: 15px; }
+  .app { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; padding: 0 16px 80px; }
 
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 1000; padding: 20px; }
-        .modal-content { background: var(--card); max-width: 450px; margin: 40px auto; border-radius: 20px; border: 1px solid var(--border); padding: 20px; }
-    </style>
+  .header { position: sticky; top: 0; z-index: 100; padding: 12px 0 8px; background: linear-gradient(to bottom, var(--bg) 60%, transparent); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+  .header-top { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; }
+  .app-title { font-size: 30px; font-weight: 800; background: linear-gradient(135deg, var(--blue), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+  .icon-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--card); backdrop-filter: blur(20px); border: 1px solid var(--card-border); color: var(--text); font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow); transition: all 0.2s; }
+  .icon-btn:active { transform: scale(0.9); }
+
+  .mode-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+  .mode-btn {
+    padding: 18px 12px;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s cubic-bezier(0.25,0.1,0.25,1);
+    background: var(--card);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid var(--card-border);
+    color: var(--text2);
+    box-shadow: var(--shadow);
+  }
+  .mode-btn .mode-icon { font-size: 28px; }
+  .mode-btn .mode-label { font-size: 15px; }
+  .mode-btn.active-enc {
+    background: linear-gradient(135deg, var(--blue), #5856D6);
+    color: white;
+    box-shadow: 0 6px 20px rgba(0,122,255,0.35);
+    transform: translateY(-2px);
+  }
+  .mode-btn.active-dec {
+    background: linear-gradient(135deg, var(--green), #30D158);
+    color: white;
+    box-shadow: 0 6px 20px rgba(52,199,89,0.35);
+    transform: translateY(-2px);
+  }
+  .mode-btn:active { transform: scale(0.97); }
+
+  .card { background: var(--card); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 20px; margin-bottom: 14px; box-shadow: var(--shadow); animation: cardIn 0.4s cubic-bezier(0.25,0.1,0.25,1) backwards; }
+  @keyframes cardIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card-label { font-size: 13px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+
+  textarea {
+    width: 100%; border: none; background: var(--divider); border-radius: var(--radius-sm); padding: 16px; font-family: inherit; font-size: 16px; color: var(--text); outline: none; line-height: 1.7; transition: all 0.3s; min-height: 110px; resize: none;
+  }
+  textarea:focus { background: var(--blue-bg); box-shadow: 0 0 0 3px rgba(0,122,255,0.2); }
+  textarea::placeholder { color: var(--text2); }
+
+  .textarea-wrap { position: relative; }
+  .char-count { position: absolute; bottom: 10px; left: 12px; font-size: 12px; color: var(--text2); font-weight: 500; background: var(--card); padding: 2px 8px; border-radius: 8px; }
+
+  .btn-primary { width: 100%; padding: 17px; border: none; border-radius: var(--radius-sm); font-family: inherit; font-size: 17px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.3s; color: white; position: relative; overflow: hidden; }
+  .btn-primary:active { transform: scale(0.97); }
+  .btn-encrypt { background: linear-gradient(135deg, var(--blue), #5856D6); box-shadow: 0 4px 20px rgba(0,122,255,0.3); }
+  .btn-decrypt { background: linear-gradient(135deg, var(--green), #30D158); box-shadow: 0 4px 20px rgba(52,199,89,0.3); }
+
+  .result-area { background: var(--divider); border-radius: var(--radius-sm); padding: 16px; min-height: 80px; word-break: break-word; line-height: 1.8; font-size: 16px; user-select: all; -webkit-user-select: all; white-space: pre-wrap; transition: all 0.3s; }
+  .result-area.error { color: var(--red); background: var(--red-bg); }
+
+  .action-row { display: flex; gap: 10px; margin-top: 12px; }
+  .action-btn { flex: 1; padding: 12px; border: none; border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; }
+  .action-btn:active { transform: scale(0.95); }
+  .btn-copy { background: var(--blue-bg); color: var(--blue); }
+  .btn-share { background: var(--purple-bg); color: var(--purple); }
+  .btn-clear { background: var(--red-bg); color: var(--red); }
+
+  .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--text); color: var(--bg); padding: 14px 28px; border-radius: 50px; font-size: 15px; font-weight: 600; box-shadow: 0 8px 30px rgba(0,0,0,0.2); z-index: 9999; opacity: 0; transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1); display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .info-tip { background: var(--orange-bg); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--orange); font-weight: 500; line-height: 1.6; border: 1px solid rgba(255,149,0,0.15); }
+  .info-tip .tip-icon { font-size: 18px; flex-shrink: 0; }
+
+  .success-box { background: var(--green-bg); border-radius: var(--radius-sm); padding: 12px 14px; margin-top: 12px; font-size: 13px; color: var(--green); font-weight: 600; line-height: 1.5; border: 1px solid rgba(52,199,89,0.2); display: flex; align-items: center; gap: 8px; }
+
+  .stats-box { background: var(--blue-bg); border-radius: var(--radius-sm); padding: 12px 14px; margin-top: 12px; font-size: 12px; color: var(--blue); font-weight: 500; line-height: 1.6; border: 1px solid rgba(0,122,255,0.2); }
+
+  .preset-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .preset-btn { padding: 8px 14px; border: 1px solid var(--divider); background: var(--card); border-radius: 20px; font-family: inherit; font-size: 13px; color: var(--text); cursor: pointer; transition: all 0.2s; }
+  .preset-btn:active { transform: scale(0.95); background: var(--blue-bg); color: var(--blue); }
+
+  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 50% { transform: translateX(8px); } 75% { transform: translateX(-4px); } }
+  .shake { animation: shake 0.4s ease; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(52,199,89,0.4); } 100% { box-shadow: 0 0 0 15px rgba(52,199,89,0); } }
+  .pulse { animation: pulse 0.6s ease; }
+
+  ::-webkit-scrollbar { width: 0; }
+
+  @supports (padding-top: env(safe-area-inset-top)) {
+    .header { padding-top: calc(env(safe-area-inset-top) + 8px); }
+    .toast { bottom: calc(env(safe-area-inset-bottom) + 30px); }
+  }
+</style>
 </head>
 <body>
 
-    <div id="lock-screen">
-        <i class="fas fa-crown" style="font-size: 40px; color: var(--gold); margin-bottom: 20px;"></i>
-        <h2 style="color:var(--gold)">النظام الملكي V10</h2>
-        <input type="password" id="passInput" maxlength="4" placeholder="••••" oninput="checkPass(this.value)">
+<div class="bg-orbs">
+  <div class="orb"></div>
+  <div class="orb"></div>
+  <div class="orb"></div>
+</div>
+
+<div class="app">
+  <div class="header">
+    <div class="header-top">
+      <h1 class="app-title">🕵️ تشفير خفي</h1>
+      <button class="icon-btn" onclick="toggleDark()" id="themeBtn">🌙</button>
+    </div>
+  </div>
+
+  <div class="mode-buttons">
+    <button class="mode-btn active-enc" id="btnEnc" onclick="switchMode('encrypt')">
+      <span class="mode-icon">🔒</span>
+      <span class="mode-label">تشفير</span>
+    </button>
+    <button class="mode-btn" id="btnDec" onclick="switchMode('decrypt')">
+      <span class="mode-icon">🔓</span>
+      <span class="mode-label">فك تشفير</span>
+    </button>
+  </div>
+
+  <div id="encryptMode">
+    <div class="info-tip">
+      <span class="tip-icon">💡</span>
+      <span>النص السري يُضغط ويُخفى في نهاية النص الظاهر. النص الظاهر يبقى طبيعياً تماماً!</span>
     </div>
 
-    <div id="main-app">
-        <div class="stats-sticky">
-            <div class="stat-card"><small>الراتب</small><b>720,000</b></div>
-            <div class="stat-card"><small>المصروف</small><b id="totalSpent" style="color:var(--danger)">0</b></div>
-            <div class="stat-card"><small>المتبقي</small><b id="totalBalance" style="color:var(--success)">0</b></div>
-        </div>
-
-        <button onclick="openLog()" style="background:var(--gold); color:#000; width:100%; border:none; padding:15px; border-radius:12px; font-weight:bold; margin-bottom:20px; cursor:pointer;">
-            <i class="fas fa-file-invoice-dollar"></i> عرض السجل الملكي والطباعة
-        </button>
-
-        <div class="input-box">
-            <input type="text" id="itemName" placeholder="المادة (م، خ...)">
-            <input type="number" id="itemPrice" placeholder="المبلغ">
-            <button class="btn-add" onclick="addItem()">إضافة للسجل</button>
-        </div>
-
-        <table>
-            <thead><tr><th>التاريخ</th><th>المادة</th><th>المبلغ</th><th>حذف</th></tr></thead>
-            <tbody id="tableBody"></tbody>
-        </table>
+    <div class="card">
+      <div class="card-label">🔐 النص المراد تشفيره (أي حجم)</div>
+      <div class="textarea-wrap">
+        <textarea id="secretText" placeholder="اكتب النص السري هنا...&#10;يمكن أن يكون 100 أو 10000 حرف!" oninput="updateCount('secretText','secretCount')"></textarea>
+        <span class="char-count" id="secretCount">0</span>
+      </div>
     </div>
 
-    <div id="logModal" class="modal">
-        <div class="modal-content">
-            <h3 style="text-align:center; color:var(--gold);">ملخص المصروفات</h3>
-            <div id="logItems"></div>
-            <button onclick="generateReceipt()" style="background:var(--success); color:#000; width:100%; border:none; padding:15px; border-radius:10px; font-weight:bold; margin-top:20px;">استخراج الوصل النهائي</button>
-            <button onclick="closeLog()" style="background:#333; color:#fff; width:100%; border:none; padding:10px; border-radius:10px; margin-top:10px;">رجوع</button>
-        </div>
+    <div class="card">
+      <div class="card-label">📝 النص الظاهر (أي حجم)</div>
+      <textarea id="coverText" placeholder="مثال: شلونك" oninput="updateCount('coverText','coverCount')"></textarea>
+      <span class="char-count" id="coverCount">0</span>
+      <div class="preset-row">
+        <button class="preset-btn" onclick="setCover('شلونك')">شلونك</button>
+        <button class="preset-btn" onclick="setCover('السلام عليكم')">سلام</button>
+        <button class="preset-btn" onclick="setCover('هلا')">هلا</button>
+        <button class="preset-btn" onclick="setCover('كيفك')">كيفك</button>
+      </div>
     </div>
 
-    <div id="receipt-render">
-        <i class="fas fa-crown" style="font-size: 30px;"></i>
-        <div class="rec-header"><h2>النظام الملكي</h2><p>كشف المصروفات الشخصية</p></div>
-        <div id="recDate" style="font-weight:bold; margin-bottom:10px; border-bottom:2px solid #000; padding-bottom:5px;"></div>
-        <table class="rec-table-final">
-            <thead><tr><th>المادة</th><th style="text-align:left">المبلغ</th></tr></thead>
-            <tbody id="recItems"></tbody>
-        </table>
-        <div style="font-weight:bold; margin-top:20px;">إجمالي المبلغ</div>
-        <div class="total-box" id="recTotal"></div>
-        <p style="font-size:10px; margin-top:30px; border-top:1px solid #000; padding-top:10px;">* وثيقة إلكترونية صادرة من نظام V10 *</p>
+    <div class="card" style="padding: 16px;">
+      <button class="btn-primary btn-encrypt" onclick="doEncrypt()">🔒 تشفير</button>
     </div>
+  </div>
+
+  <div id="decryptMode" style="display:none;">
+    <div class="info-tip">
+      <span class="tip-icon">💡</span>
+      <span>الصق النص المستلم → اضغط فك تشفير → يظهر النص السري الأصلي</span>
+    </div>
+
+    <div class="card">
+      <div class="card-label">📥 النص المستلم (الصقه هنا)</div>
+      <div class="textarea-wrap">
+        <textarea id="encText" placeholder="الصق النص الذي أرسله لك الشخص..." oninput="updateCount('encText','encCount')"></textarea>
+        <span class="char-count" id="encCount">0</span>
+      </div>
+    </div>
+
+    <div class="card" style="padding: 16px;">
+      <button class="btn-primary btn-decrypt" onclick="doDecrypt()">🔓 فك تشفير</button>
+    </div>
+  </div>
+
+  <div class="card" id="resultCard" style="display:none;">
+    <div class="card-label">
+      <span id="resultIcon">✅</span>
+      <span id="resultLabel">النتيجة</span>
+    </div>
+    <div class="result-area" id="resultArea"></div>
+    <div id="statsBox" class="stats-box" style="display:none;"></div>
+    <div id="successMsg" class="success-box" style="display:none;">
+      <span>✅</span>
+      <span>تم النسخ تلقائياً! أرسله للشخص</span>
+    </div>
+    <div class="action-row">
+      <button class="action-btn btn-copy" onclick="copyResult()">📋 نسخ</button>
+      <button class="action-btn btn-share" onclick="shareResult()">📤 مشاركة</button>
+      <button class="action-btn btn-clear" onclick="clearResult()">🗑 مسح</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script>
-    const SALARY = 720000;
-    const STORAGE_KEY = "ROYAL_V10_FINAL_STABLE";
-    const shortcuts = {'م': 'مولد', 'خ': 'مخضر', 'د': 'دجاج/لحوم', 'ن': 'انترنت', 'ص': 'مصروف شخصي', 'ر': 'رصيد'};
-    let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-
-    function checkPass(v) { if(v === "2006") { document.getElementById('lock-screen').style.display='none'; document.getElementById('main-app').style.display='block'; renderUI(); } }
-
-    function addItem() {
-        let name = document.getElementById('itemName').value.trim();
-        let price = parseFloat(document.getElementById('itemPrice').value);
-        if(!name || isNaN(price)) return;
-        if(shortcuts[name]) name = shortcuts[name];
-        db.push({ id: Date.now(), name, price: price * 1000, date: new Date().toLocaleDateString('ar-EG', {month:'2-digit', day:'2-digit'}) });
-        save();
-        document.getElementById('itemName').value=''; document.getElementById('itemPrice').value=''; document.getElementById('itemName').focus();
-    }
-
-    function renderUI() {
-        const body = document.getElementById('tableBody'); body.innerHTML = ''; let total = 0;
-        db.slice().reverse().forEach(item => {
-            total += item.price;
-            body.innerHTML += `<tr><td>${item.date}</td><td style="font-weight:bold">${item.name}</td><td style="color:var(--gold); font-weight:bold">${item.price.toLocaleString()}</td><td><i class="fas fa-trash-alt" style="color:var(--danger); cursor:pointer" onclick="deleteItem(${item.id})"></i></td></tr>`;
-        });
-        document.getElementById('totalSpent').innerText = total.toLocaleString();
-        document.getElementById('totalBalance').innerText = (SALARY - total).toLocaleString();
-    }
-
-    function deleteItem(id) { if(confirm("حذف؟")) { db = db.filter(i => i.id !== id); save(); } }
-    function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); renderUI(); }
-    function openLog() {
-        document.getElementById('logModal').style.display = 'block';
-        const summary = db.reduce((acc, item) => { acc[item.name] = (acc[item.name] || 0) + item.price; return acc; }, {});
-        let html = ''; for(let k in summary) html += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #333;"><span>${k}</span><b>${summary[k].toLocaleString()}</b></div>`;
-        document.getElementById('logItems').innerHTML = html || 'لا توجد بيانات';
-    }
-    function closeLog() { document.getElementById('logModal').style.display = 'none'; }
-
-    function generateReceipt() {
-        const summary = db.reduce((acc, item) => { acc[item.name] = (acc[item.name] || 0) + item.price; return acc; }, {});
-        document.getElementById('recDate').innerText = new Date().toLocaleString('ar-EG');
-        let html = ''; let total = 0;
-        for(let k in summary) {
-            total += summary[k];
-            html += `<tr><td style="color:#000 !important">${k}</td><td style="text-align:left; color:#000 !important">${summary[k].toLocaleString()}</td></tr>`;
+  // === LZ-String Compression ===
+  const LZString = (function() {
+    const f = String.fromCharCode;
+    
+    const compress = function(uncompressed) {
+      if (uncompressed == null) return "";
+      return _compress(uncompressed, 16, function(a){return f(a);});
+    };
+    
+    const _compress = function(uncompressed, bitsPerChar, getCharFromInt) {
+      if (uncompressed == null) return "";
+      let i, value,
+        context_dictionary = {},
+        context_dictionaryToCreate = {},
+        context_c = "",
+        context_wc = "",
+        context_w = "",
+        context_enlargeIn = 2,
+        context_dictSize = 3,
+        context_numBits = 2,
+        context_data = [],
+        context_data_val = 0,
+        context_data_position = 0,
+        ii;
+      
+      for (ii = 0; ii < uncompressed.length; ii += 1) {
+        context_c = uncompressed.charAt(ii);
+        if (!Object.prototype.hasOwnProperty.call(context_dictionary, context_c)) {
+          context_dictionary[context_c] = context_dictSize++;
+          context_dictionaryToCreate[context_c] = true;
         }
-        document.getElementById('recItems').innerHTML = html;
-        document.getElementById('recTotal').innerText = total.toLocaleString() + " د.ع";
+        context_wc = context_w + context_c;
+        if (Object.prototype.hasOwnProperty.call(context_dictionary, context_wc)) {
+          context_w = context_wc;
+        } else {
+          if (Object.prototype.hasOwnProperty.call(context_dictionaryToCreate, context_w)) {
+            if (context_w.charCodeAt(0) < 256) {
+              for (i = 0; i < context_numBits; i++) {
+                context_data_val = (context_data_val << 1);
+                if (context_data_position == bitsPerChar - 1) {
+                  context_data_position = 0;
+                  context_data.push(getCharFromInt(context_data_val));
+                  context_data_val = 0;
+                } else {
+                  context_data_position++;
+                }
+              }
+              value = context_w.charCodeAt(0);
+              for (i = 0; i < 8; i++) {
+                context_data_val = (context_data_val << 1) | (value & 1);
+                if (context_data_position == bitsPerChar - 1) {
+                  context_data_position = 0;
+                  context_data.push(getCharFromInt(context_data_val));
+                  context_data_val = 0;
+                } else {
+                  context_data_position++;
+                }
+                value = value >> 1;
+              }
+            } else {
+              value = 1;
+              for (i = 0; i < context_numBits; i++) {
+                context_data_val = (context_data_val << 1) | value;
+                if (context_data_position == bitsPerChar - 1) {
+                  context_data_position = 0;
+                  context_data.push(getCharFromInt(context_data_val));
+                  context_data_val = 0;
+                } else {
+                  context_data_position++;
+                }
+                value = 0;
+              }
+              value = context_w.charCodeAt(0);
+              for (i = 0; i < 16; i++) {
+                context_data_val = (context_data_val << 1) | (value & 1);
+                if (context_data_position == bitsPerChar - 1) {
+                  context_data_position = 0;
+                  context_data.push(getCharFromInt(context_data_val));
+                  context_data_val = 0;
+                } else {
+                  context_data_position++;
+                }
+                value = value >> 1;
+              }
+            }
+            context_enlargeIn--;
+            if (context_enlargeIn == 0) {
+              context_enlargeIn = Math.pow(2, context_numBits);
+              context_numBits++;
+            }
+            delete context_dictionaryToCreate[context_w];
+          } else {
+            value = context_dictionary[context_w];
+            for (i = 0; i < context_numBits; i++) {
+              context_data_val = (context_data_val << 1) | (value & 1);
+              if (context_data_position == bitsPerChar - 1) {
+                context_data_position = 0;
+                context_data.push(getCharFromInt(context_data_val));
+                context_data_val = 0;
+              } else {
+                context_data_position++;
+              }
+              value = value >> 1;
+            }
+          }
+          context_enlargeIn--;
+          if (context_enlargeIn == 0) {
+            context_enlargeIn = Math.pow(2, context_numBits);
+            context_numBits++;
+          }
+          context_dictionary[context_wc] = context_dictSize++;
+          context_w = String(context_c);
+        }
+      }
+      
+      if (context_w !== "") {
+        if (Object.prototype.hasOwnProperty.call(context_dictionaryToCreate, context_w)) {
+          if (context_w.charCodeAt(0) < 256) {
+            for (i = 0; i < context_numBits; i++) {
+              context_data_val = (context_data_val << 1);
+              if (context_data_position == bitsPerChar - 1) {
+                context_data_position = 0;
+                context_data.push(getCharFromInt(context_data_val));
+                context_data_val = 0;
+              } else {
+                context_data_position++;
+              }
+            }
+            value = context_w.charCodeAt(0);
+            for (i = 0; i < 8; i++) {
+              context_data_val = (context_data_val << 1) | (value & 1);
+              if (context_data_position == bitsPerChar - 1) {
+                context_data_position = 0;
+                context_data.push(getCharFromInt(context_data_val));
+                context_data_val = 0;
+              } else {
+                context_data_position++;
+              }
+              value = value >> 1;
+            }
+          } else {
+            value = 1;
+            for (i = 0; i < context_numBits; i++) {
+              context_data_val = (context_data_val << 1) | value;
+              if (context_data_position == bitsPerChar - 1) {
+                context_data_position = 0;
+                context_data.push(getCharFromInt(context_data_val));
+                context_data_val = 0;
+              } else {
+                context_data_position++;
+              }
+              value = 0;
+            }
+            value = context_w.charCodeAt(0);
+            for (i = 0; i < 16; i++) {
+              context_data_val = (context_data_val << 1) | (value & 1);
+              if (context_data_position == bitsPerChar - 1) {
+                context_data_position = 0;
+                context_data.push(getCharFromInt(context_data_val));
+                context_data_val = 0;
+              } else {
+                context_data_position++;
+              }
+              value = value >> 1;
+            }
+          }
+          context_enlargeIn--;
+          if (context_enlargeIn == 0) {
+            context_enlargeIn = Math.pow(2, context_numBits);
+            context_numBits++;
+          }
+          delete context_dictionaryToCreate[context_w];
+        } else {
+          value = context_dictionary[context_w];
+          for (i = 0; i < context_numBits; i++) {
+            context_data_val = (context_data_val << 1) | (value & 1);
+            if (context_data_position == bitsPerChar - 1) {
+              context_data_position = 0;
+              context_data.push(getCharFromInt(context_data_val));
+              context_data_val = 0;
+            } else {
+              context_data_position++;
+            }
+            value = value >> 1;
+          }
+        }
+        context_enlargeIn--;
+        if (context_enlargeIn == 0) {
+          context_enlargeIn = Math.pow(2, context_numBits);
+          context_numBits++;
+        }
+      }
+      
+      value = 2;
+      for (i = 0; i < context_numBits; i++) {
+        context_data_val = (context_data_val << 1) | (value & 1);
+        if (context_data_position == bitsPerChar - 1) {
+          context_data_position = 0;
+          context_data.push(getCharFromInt(context_data_val));
+          context_data_val = 0;
+        } else {
+          context_data_position++;
+        }
+        value = value >> 1;
+      }
+      
+      while (true) {
+        context_data_val = (context_data_val << 1);
+        if (context_data_position == bitsPerChar - 1) {
+          context_data.push(getCharFromInt(context_data_val));
+          break;
+        }
+        else context_data_position++;
+      }
+      return context_data.join('');
+    };
+    
+    const decompress = function(compressed) {
+      if (compressed == null) return "";
+      if (compressed == "") return null;
+      return _decompress(compressed.length, 32768, function(index){return compressed.charCodeAt(index);});
+    };
+    
+    const _decompress = function(length, resetValue, getNextValue) {
+      let dictionary = [],
+        enlargeIn = 4,
+        dictSize = 4,
+        numBits = 3,
+        entry = "",
+        result = [],
+        i,
+        w,
+        c,
+        data_val = getNextValue(0),
+        data_position = resetValue,
+        data_index = 1;
+      
+      for (i = 0; i < 3; i += 1) {
+        dictionary[i] = i;
+      }
+      
+      let bits = 0, maxpower = Math.pow(2, 2), power = 1;
+      while (power != maxpower) {
+        let resb = data_val & data_position;
+        data_position >>= 1;
+        if (data_position == 0) {
+          data_position = resetValue;
+          data_val = getNextValue(data_index++);
+        }
+        bits |= (resb > 0 ? 1 : 0) * power;
+        power <<= 1;
+      }
+      
+      let next = bits;
+      switch (next) {
+        case 0:
+          bits = 0; maxpower = Math.pow(2, 8); power = 1;
+          while (power != maxpower) {
+            let resb = data_val & data_position;
+            data_position >>= 1;
+            if (data_position == 0) {
+              data_position = resetValue;
+              data_val = getNextValue(data_index++);
+            }
+            bits |= (resb > 0 ? 1 : 0) * power;
+            power <<= 1;
+          }
+          c = f(bits);
+          break;
+        case 1:
+          bits = 0; maxpower = Math.pow(2, 16); power = 1;
+          while (power != maxpower) {
+            let resb = data_val & data_position;
+            data_position >>= 1;
+            if (data_position == 0) {
+              data_position = resetValue;
+              data_val = getNextValue(data_index++);
+            }
+            bits |= (resb > 0 ? 1 : 0) * power;
+            power <<= 1;
+          }
+          c = f(bits);
+          break;
+        case 2:
+          return "";
+      }
+      dictionary[3] = c;
+      w = c;
+      result.push(c);
+      
+      while (true) {
+        if (data_index > length) return "";
+        
+        bits = 0; maxpower = Math.pow(2, numBits); power = 1;
+        while (power != maxpower) {
+          let resb = data_val & data_position;
+          data_position >>= 1;
+          if (data_position == 0) {
+            data_position = resetValue;
+            data_val = getNextValue(data_index++);
+          }
+          bits |= (resb > 0 ? 1 : 0) * power;
+          power <<= 1;
+        }
+        
+        switch (c = bits) {
+          case 0:
+            bits = 0; maxpower = Math.pow(2, 8); power = 1;
+            while (power != maxpower) {
+              let resb = data_val & data_position;
+              data_position >>= 1;
+              if (data_position == 0) {
+                data_position = resetValue;
+                data_val = getNextValue(data_index++);
+              }
+              bits |= (resb > 0 ? 1 : 0) * power;
+              power <<= 1;
+            }
+            dictionary[dictSize++] = f(bits);
+            c = dictSize - 1;
+            enlargeIn--;
+            break;
+          case 1:
+            bits = 0; maxpower = Math.pow(2, 16); power = 1;
+            while (power != maxpower) {
+              let resb = data_val & data_position;
+              data_position >>= 1;
+              if (data_position == 0) {
+                data_position = resetValue;
+                data_val = getNextValue(data_index++);
+              }
+              bits |= (resb > 0 ? 1 : 0) * power;
+              power <<= 1;
+            }
+            dictionary[dictSize++] = f(bits);
+            c = dictSize - 1;
+            enlargeIn--;
+            break;
+          case 2:
+            return result.join('');
+        }
+        
+        if (enlargeIn == 0) {
+          enlargeIn = Math.pow(2, numBits);
+          numBits++;
+        }
+        
+        if (dictionary[c]) {
+          entry = dictionary[c];
+        } else {
+          if (c === dictSize) {
+            entry = w + w.charAt(0);
+          } else {
+            return null;
+          }
+        }
+        result.push(entry);
+        
+        dictionary[dictSize++] = w + entry.charAt(0);
+        enlargeIn--;
+        
+        if (enlargeIn == 0) {
+          enlargeIn = Math.pow(2, numBits);
+          numBits++;
+        }
+        
+        w = entry;
+      }
+    };
+    
+    return { compress, decompress };
+  })();
 
-        html2canvas(document.getElementById('receipt-render'), { scale: 3, backgroundColor: "#fffbe6" }).then(canvas => {
-            const link = document.createElement('a');
-            link.download = `وصل_الملكي_التختيم.png`;
-            link.href = canvas.toDataURL();
-            link.click();
-        });
+  // === Zero-Width Characters ===
+  const ZW = ['\u200B', '\u200C', '\u200D', '\uFEFF'];
+  const MAGIC = '\u2603\u2603\u2603';
+
+  // === تشفير: ضغط + إخفاء في النهاية فقط ===
+  function hideMessage(secret, cover) {
+    // ضغط النص
+    const compressed = LZString.compress(secret);
+    const payload = MAGIC + compressed + MAGIC;
+    
+    // تحويل إلى ثنائي
+    let bits = '';
+    for (let i = 0; i < payload.length; i++) {
+      bits += payload.charCodeAt(i).toString(2).padStart(16, '0');
     }
+    
+    // تحويل إلى حروف غير مرئية
+    let hidden = '';
+    for (let i = 0; i < bits.length; i += 2) {
+      const pair = bits.substr(i, 2);
+      const idx = parseInt(pair, 2);
+      hidden += ZW[idx];
+    }
+    
+    // إضافة الحروف غير المرئية في نهاية النص الظاهر فقط
+    const result = cover + hidden;
+    
+    return {
+      result,
+      compressedSize: compressed.length,
+      originalSize: secret.length,
+      ratio: ((compressed.length / secret.length) * 100).toFixed(1)
+    };
+  }
+
+  // === فك التشفير ===
+  function extractMessage(text) {
+    let hidden = '';
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (ZW.includes(c)) hidden += c;
+    }
+    
+    if (hidden.length === 0) {
+      throw new Error('NO_HIDDEN');
+    }
+    
+    // تحويل إلى ثنائي
+    let bits = '';
+    for (let i = 0; i < hidden.length; i++) {
+      const idx = ZW.indexOf(hidden[i]);
+      bits += idx.toString(2).padStart(2, '0');
+    }
+    
+    // تحويل إلى نص
+    let compressed = '';
+    for (let i = 0; i < bits.length; i += 16) {
+      const chunk = bits.substr(i, 16);
+      if (chunk.length < 16) break;
+      compressed += String.fromCharCode(parseInt(chunk, 2));
+    }
+    
+    // التحقق من العلامة
+    if (!compressed.startsWith(MAGIC) || !compressed.endsWith(MAGIC)) {
+      throw new Error('WRONG_PASS');
+    }
+    
+    // استخراج وفك الضغط
+    compressed = compressed.slice(MAGIC.length, -MAGIC.length);
+    const secret = LZString.decompress(compressed);
+    
+    if (!secret) {
+      throw new Error('DECOMPRESS_FAILED');
+    }
+    
+    return secret;
+  }
+
+  // === الواجهة ===
+  function switchMode(mode) {
+    const isEnc = mode === 'encrypt';
+    document.getElementById('btnEnc').className = 'mode-btn' + (isEnc ? ' active-enc' : '');
+    document.getElementById('btnDec').className = 'mode-btn' + (!isEnc ? ' active-dec' : '');
+    document.getElementById('encryptMode').style.display = isEnc ? 'block' : 'none';
+    document.getElementById('decryptMode').style.display = isEnc ? 'none' : 'block';
+    document.getElementById('resultCard').style.display = 'none';
+  }
+
+  function toggleDark() {
+    document.body.classList.toggle('dark');
+    const isDark = document.body.classList.contains('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    document.getElementById('themeBtn').textContent = isDark ? '☀️' : '🌙';
+  }
+
+  function updateCount(taId, countId) {
+    document.getElementById(countId).textContent = document.getElementById(taId).value.length;
+  }
+
+  function setCover(text) {
+    document.getElementById('coverText').value = text;
+    updateCount('coverText', 'coverCount');
+  }
+
+  function shakeEl(id) {
+    const el = document.getElementById(id);
+    el.classList.add('shake');
+    setTimeout(() => el.classList.remove('shake'), 400);
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  function showResult(text, isError, icon, label, autoCopy, stats) {
+    const card = document.getElementById('resultCard');
+    const area = document.getElementById('resultArea');
+    const successMsg = document.getElementById('successMsg');
+    const statsBox = document.getElementById('statsBox');
+    
+    area.textContent = text;
+    area.className = isError ? 'result-area error' : 'result-area';
+    document.getElementById('resultIcon').textContent = icon;
+    document.getElementById('resultLabel').textContent = label;
+    
+    if (autoCopy && !isError) {
+      successMsg.style.display = 'flex';
+    } else {
+      successMsg.style.display = 'none';
+    }
+    
+    if (stats) {
+      statsBox.style.display = 'block';
+      statsBox.innerHTML = stats;
+    } else {
+      statsBox.style.display = 'none';
+    }
+    
+    card.style.display = 'block';
+    if (!isError) card.classList.add('pulse');
+    setTimeout(() => card.classList.remove('pulse'), 600);
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function autoCopy(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+    } else {
+      fallbackCopy(text);
+    }
+  }
+
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch(e) {}
+    document.body.removeChild(ta);
+  }
+
+  function doEncrypt() {
+    const secret = document.getElementById('secretText').value.trim();
+    let cover = document.getElementById('coverText').value.trim();
+
+    if (!secret) { shakeEl('secretText'); showToast('⚠️ أدخل النص السري'); return; }
+    if (!cover) { shakeEl('coverText'); showToast('⚠️ أدخل النص الظاهر'); return; }
+
+    try {
+      const { result, compressedSize, originalSize, ratio } = hideMessage(secret, cover);
+      
+      const stats = `📊 <b>الإحصائيات:</b><br>
+        • النص الأصلي: ${originalSize} حرف<br>
+        • بعد الضغط: ${compressedSize} حرف (${ratio}%)<br>
+        • النص الظاهر: ${cover.length} حرف<br>
+        • الحجم النهائي: ${result.length} حرف`;
+      
+      showResult(result, false, '🔒', 'النص الجاهز للإرسال', true, stats);
+      autoCopy(result);
+      showToast('✅ تم التشفير والنسخ');
+    } catch (e) {
+      showToast('❌ حدث خطأ: ' + e.message);
+    }
+  }
+
+  function doDecrypt() {
+    const text = document.getElementById('encText').value;
+
+    if (!text) { shakeEl('encText'); showToast('⚠️ الصق النص أولاً'); return; }
+
+    try {
+      const secret = extractMessage(text);
+      showResult(secret, false, '🔓', 'النص السري المستخرج', false, null);
+      showToast('✅ تم فك التشفير');
+    } catch (e) {
+      if (e.message === 'NO_HIDDEN') {
+        shakeEl('encText');
+        showToast('❌ لا يوجد نص مخفي');
+        showResult('هذا النص لا يحتوي على رسالة مخفية', true, '❌', 'خطأ', false, null);
+      } else if (e.message === 'WRONG_PASS' || e.message === 'DECOMPRESS_FAILED') {
+        shakeEl('encText');
+        showToast('❌ النص تالف أو غير صالح');
+        showResult('النص غير صالح أو تالف', true, '❌', 'خطأ', false, null);
+      } else {
+        showToast('❌ فشل فك التشفير');
+      }
+    }
+  }
+
+  function copyResult() {
+    const text = document.getElementById('resultArea').textContent;
+    if (!text) return;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => showToast('📋 تم النسخ')).catch(() => {
+        fallbackCopy(text);
+        showToast('📋 تم النسخ');
+      });
+    } else {
+      fallbackCopy(text);
+      showToast('📋 تم النسخ');
+    }
+  }
+
+  async function shareResult() {
+    const text = document.getElementById('resultArea').textContent;
+    if (!text) return;
+    if (navigator.share) {
+      try { await navigator.share({ title: 'رسالة', text }); } catch(e) {}
+    } else {
+      copyResult();
+    }
+  }
+
+  function clearResult() {
+    document.getElementById('resultCard').style.display = 'none';
+  }
+
+  // === Init ===
+  if (localStorage.getItem('theme') === 'dark') {
+    document.body.classList.add('dark');
+    document.getElementById('themeBtn').textContent = '☀️';
+  }
 </script>
+
 </body>
 </html>
